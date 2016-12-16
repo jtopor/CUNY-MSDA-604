@@ -1,7 +1,7 @@
 ---
-title: "Optimized Decision Making About Library Shelf Space Through Simulation"
+title: "Optimized Decision Making For Library Shelf Space Through Simulation"
 author: "Daina Bouquin, John DeBlase, James Topor"
-date: "December 5, 2016"
+date: "December 15, 2016"
 output: pdf_document
 geometry: margin=2.2cm
 ---
