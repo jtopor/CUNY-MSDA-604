@@ -1,0 +1,149 @@
+---
+title: "604 Project"
+author: "James Topor"
+date: "November 12, 2016"
+output: html_document
+---
+
+```{r}
+# load package for triangular distribution functions
+library(triangle)
+
+# ======================================================
+# Initialize Constants
+# ======================================================
+
+# set total number of volumes at start of simulation
+Nvols <- 1000
+
+# set total number of shelves
+Nshelves <- 50
+
+# set length of shelf in inches
+shelf_width <- 36
+
+# set min shelf free space for each shelf as a percentage of total shelf width
+sfree_space <- 0.1
+
+# set max shelf space consumed by books
+max_shelved <- shelf_width - (shelf_width * sfree_space)
+
+# ======================================================
+# Initialize 'books' data frame
+# ======================================================
+
+# book_id: unique ID for each book
+# shelf_id: ID of shelf book is assigned to (zero initially)
+# width: width of book (is set via random sampling below)
+# chkdout: binary 0/1 flag => 0 = not checked out; 1 = book has been checked out
+books <- data.frame(book_id = 1:Nvols, shelf_id = numeric(Nvols),
+                    width = numeric(Nvols), chkdout = numeric(Nvols), stringsAsFactors = FALSE)
+
+# set book widths: distrib is between 1-2 inches; assume UNIFORM distribution
+# NOTE: distribution to be sampled from can be changed to anything we want
+a <- 1 # set lower bound of triangular distribution
+b <- 2 # set upper bound of triangular distribution
+
+# now sample from triangular distribution: Number of samples = number of books ('Nvols')
+books$width <- rtriangle(Nvols, a, b, (a + b)/b )
+
+# ======================================================
+# Initialize 'shelves' data frame
+# ======================================================
+
+# shelf_id:  unique ID for shelf
+# in_use: total linear inches of space containing books on a given shelf
+# perc_used: A placeholder for now - can be used to track percentage of space currently
+#            in use on a shelf. We can remove this field if not needed.
+shelves <- data.frame(shelf_id = 1:Nshelves, in_use = numeric(Nshelves), 
+                      perc_used = numeric(Nshelves), stringsAsFactors = FALSE)
+
+# =====================================================
+# Assign books to shelves
+# =====================================================
+
+# initialize index variable for books data frame
+k <- 1
+
+# sum book widths to ensure they don't exceed (max shelf width - free_space)
+for (i in 1: Nshelves) {
+  
+  # while space used on shelf < max space consumed by books and book index < Nvols
+  while ((shelves$in_use[i] + books$width[k]) < max_shelved & (k <= Nvols) ) {
+      # assign shelf to next book
+      books$shelf_id[k] <- shelves$shelf_id[i]
+      # add width of book to total used on current shelf
+      shelves$in_use[i] <- shelves$in_use[i] + books$width[k]
+      k <- k + 1
+  } # end while
+  
+} # end for
+
+# now check results
+shelves
+
+head(books, n = 20)
+tail(books, n = 20)
+
+# =====================================================
+# Initialization: set 10% of books to 'checked out' prior to running any simulations
+# =====================================================
+
+# select 10% of book_id values to set to 'checked out' status
+c_out <- sample(books$book_id, (Nvols * .10), replace = FALSE)
+
+# For each book_id in c_out, set chkdout = 1 and subtract
+# book width from shelf space used for appropriate shelf_id
+for (i in c_out) {
+  # set chkdout flag to 1
+  books$chkdout[i] <- 1
+  # subtract width of chkdout book from space in use on its assigned shelf
+  shelves$in_use[books$shelf_id[i]] <- shelves$in_use[books$shelf_id[i]] - books$width[i]
+}
+
+# check results: should be 10% of books set the chkdout == 1
+sum(books$chkdout == 1)
+
+
+#################################################################
+# Simulation: 
+#
+#
+#
+#################################################################
+
+# =====================================================
+# 1 round of weeding - 2% of the collection
+# =====================================================
+
+
+# =====================================================
+# 1 set of purchases - 5 to 25 books (simulated book widths)
+# =====================================================
+
+
+# =====================================================
+# 1 set of textbook purchases (simulated book widths) - 2 copies of 3 to 5 books
+# =====================================================
+
+
+# =====================================================
+# 1 round of de-dup: Num of vols de-duped based on number of textbooks purchased
+# =====================================================
+
+
+
+# =====================================================
+# 1 round of check-ins - 2% of the collection gets checked in (not the same as the check outs)
+# =====================================================
+
+
+
+# =====================================================
+# 1 round of check-outs - 2% of the collection gets newly checked out
+# =====================================================
+
+
+
+
+```

@@ -1,0 +1,121 @@
+---
+title: "604 Final Project"
+author: "James Topor"
+date: "December 2, 2016"
+output: pdf_document
+geometry: margin=2.2cm
+
+---
+
+```{r}
+library(knitr)
+
+set.seed(123)
+
+setwd("c:/users/hammer/Documents/github/Sim_Project")
+
+source("single_sim.R")  # import single_sim... 
+
+# set the sequence for the required amounts of free shelf space
+free_inches <- seq(3, 6, 0.5)
+
+df_dim <- length(free_inches)
+
+# create data frame to store results of separate simulations for different free shelf space values
+res_master <- data.frame(Inches = free_inches, mu = numeric(df_dim), mdn = numeric(df_dim),
+                         min = numeric(df_dim), max = numeric(df_dim), sd = numeric(df_dim),
+                         c_int = character(df_dim), stringsAsFactors = FALSE)
+
+# create data frame to store count of books moved to offsite storage 
+os_master <- data.frame(Inches = free_inches, mu = numeric(df_dim), mdn = numeric(df_dim),
+                         min = numeric(df_dim), max = numeric(df_dim), sd = numeric(df_dim),
+                         c_int = character(df_dim), stringsAsFactors = FALSE )
+
+# create a vector to store results of 100 sims of one free shelf space value
+sim_results = numeric(100)
+del_bks = numeric(100)
+
+# for each item in the free shelf space sequence, run the full simulation
+# and collect results
+df_ind <- 1
+
+# create a data frame to store all simulation results for use outside of the for loop
+bxp_df <- data.frame(matrix(, nrow=100, ncol=0))
+delbks_df <- data.frame(matrix(, nrow=100, ncol=0))
+
+for (k in free_inches) {
+  # run 100 iterations for each free shelf space value
+  for(i in 1:100){
+    res_list <- single_sim(sfree_space = k)
+    sim_results[i] <- res_list$iters
+    del_bks[i] <- res_list$delbks
+  }
+  
+  # add col containing sim results to boxplot dataframe
+  bxp_df <- cbind(bxp_df, sim_results)
+  # set the name of the new col to the number of inches of free space
+  colnames(bxp_df)[colnames(bxp_df) == 'sim_results'] <- toString(k)
+  
+  # add col containing del_bks to deleted books dataframe
+  delbks_df <- cbind(delbks_df, del_bks)
+  # set the name of the new col to the number of inches of free space
+  colnames(delbks_df)[colnames(delbks_df) == 'del_bks'] <- toString(k)
+  
+  # display results for free shelf space = k
+  print(sprintf("Free Space = %1.1f inches", k))
+  print(summary(sim_results))
+  xl <- sprintf("Free Space = %1.1f inches", k)
+  hist(sim_results, breaks = 20, col = 'yellow', xlab = xl)
+  
+  # create a boxplot of the results for free shelf space = k
+  # boxplot(sim_results, main = xl, col = 'yellow' )
+  
+  # store iteration results in master results data frame
+  res_master$mu[df_ind] <- mean(sim_results)
+  res_master$mdn[df_ind] <- median(sim_results)
+  res_master$min[df_ind] <- min(sim_results)
+  res_master$max[df_ind] <- max(sim_results)
+  res_master$sd[df_ind] <- round(sd(sim_results), 3)
+  # calculate 95% confidence interval: First we need SE = sd/sqrt(N)
+  SE <- sd(sim_results) / sqrt(100) 
+  lowerB <- mean(sim_results) - 1.96 * SE
+  upperB <- mean(sim_results) + 1.96 * SE
+  res_master$c_int[df_ind] <- toString(sprintf("(%2.3f, %2.3f)", lowerB, upperB))
+  
+  # store iteration results in master results data frame
+  os_master$mu[df_ind] <- mean(del_bks)
+  os_master$mdn[df_ind] <- median(del_bks)
+  os_master$min[df_ind] <- min(del_bks)
+  os_master$max[df_ind] <- max(del_bks)
+  os_master$sd[df_ind] <- round(sd(del_bks), 3)
+  # calculate 95% confidence interval: First we need SE = sd/sqrt(N)
+  SE <- sd(del_bks) / sqrt(100) 
+  lowerB <- mean(del_bks) - 1.96 * SE
+  upperB <- mean(del_bks) + 1.96 * SE
+  os_master$c_int[df_ind] <- toString(sprintf("(%2.3f, %2.3f)", lowerB, upperB))
+  
+  df_ind <- df_ind + 1
+}
+```
+
+\newpage
+
+```{r}
+# side-by-side boxplots of number of iterations until shelf shift needed
+boxplot(bxp_df, main = "Results: # of Iterations Until Shelf Shift", xlab = "Initial Free Shelf Space Value (inches)", ylab = "# of Iterations Until Shelf Shift Required", col = "yellow")
+
+kable(res_master, caption = "Number of Iterations Until Shelf Shift Needed")
+```
+
+\newpage
+
+```{r}
+# linear plot avg number of books sent off site
+plot(x = os_master$Inches, y = os_master$mu, type = "line", col = "blue", lwd = 3,
+     xlab = "Initial Free Shelf Space Value (inches)",  
+     ylab = "Avg. # of Books Sent Off Site", 
+     main = "Results: Avg. # of Books Sent Off Site")
+
+kable(os_master, caption = "Number of Books Sent Off Site")
+
+```
