@@ -1,8 +1,8 @@
 ---
-title: "Optimized Decision Making For Library Shelf Space Through Simulation"
+title: "Optimized Decision Making for Library Shelf Space Through Simulation"
 author: "Daina Bouquin, John DeBlase, James Topor"
 date: "December 15, 2016"
-output: pdf_document
+output: html_document
 geometry: margin=2.2cm
 ---
 
@@ -112,7 +112,7 @@ __How Soon Will A Shelf Shift Be Required?__
 
 Running the simulation 100 times for each of the previously defined initial free shelf space values allows us to approximate how soon the library will be required to engage in a shelf shifting effort for each of the respective initial free shelf space values. A summary of our findings for this time-based metric is provided in __Table 1__, where the __Inches__ column represents the initial free shelf space value for the respective sets of 100 simulation runs and the __mu__ column represents the average number of simulation cycles completed prior to at least 5 virtual library shelves become filled with books. As was mentioned above, each of the simulated cycles represents approximately one academic year's worth of shelf activity for the Wolbach Library. The median, minimum, and maximum number of completed simulation cycles are shown in the __mdn__, __min__, and __max__ columns, respectively, while the __sd__ column represents the standard deviation for the number of completed simulation cycles. Finally, the __c_int__ column represents the 95% confidence interval for the mean number of completed simulation cycles.
 
-\includegraphics[width=300pt]{Table1.png}
+![Image](Table1.png)
 
 Given that each simulation cycle represents approximately one academic year of library shelf activity, __Table 1__ shows that increasing the initial free shelf space value from 3 inches up to 6 inches more than doubles the amount of time the library might expect to pass before being required to engage in a shelf shifting effort. This result in and of itself is rather unsurprising since one would expect that a greater amount of initial free shelf space will delay the need for a shelf shift to a greater degree than will a relatively lesser amount of initial free shelf space. 
 
@@ -120,7 +120,7 @@ __Table 1__ also clearly shows that the number of simulation cycles completed pr
 
 Additionally, this first table also shows that increasing the initial free shelf space value from 4 inches to 4.5 inches does not appear to substantively increase the number of times the simulation cycle can be completed prior to the shelves becoming filled. However, increasing the value from 3 inches to 4 inches or from 4 inches to 5 inches does appear to substantively increase the number of times the simulation cycle can be completed prior to the shelves become filled. The boxplots shown below provide further evidence for this observation.
 
-\includegraphics[width=400pt]{boxes2.png}
+![Image](boxes2.png)
 
 In fact, the boxplots also appear to demonstrate a substantive delay to the need for shelf shifting if the initial free shelf space value is increased beyond 5 inches by any 0.5 inch increment. However, as shown in __Table 2__ below, this delay in the need for shelf shifting comes at the cost of having to send an ever increasing number of books to offsite storage. 
 
@@ -128,11 +128,11 @@ __How Many Books Must Be Shipped to Off Site Storage?__
 
 The simulation also allows us to evaluate whether an increase in the amount of initial free shelf space will result in an increase in the need for off site storage for some portion of the library's collection. __Table 2__ summarizes our findings regarding the need for offsite storage. The structure of __Table 2__ is analogous to that of __Table 1__ with the variable being analyzed in __Table 2__ representing the average number of books shipped offsite due to lack of shelf space for each respective set of 100 simulation runs.
 
-\includegraphics[width=300pt]{Table2.png}
+![Image](Table2.png)
 
 __Table 2__ clearly shows that the library should expect no increase in the number of books stored offsite unless the initial free shelf space value is set to at least 5 inches. At 5 inches, off site storage may be required for a very small number of books (mu = 0.15), though a 5 inch space would allow the library to extend the average amount of time between required shelf shifts from the approximately 7.68 cycles achievable at 4.5 inches to 9.17 cycles (see Table 1). Increasing the initial free space value beyond 5 inches results in a substantive increase in the number of books that must be sent off site due to the fact that imposing ever-larger free space constraints will necessarily reduce the amount of shelf space available for books. The figure shown below clearly summarizes this phenomena based on the results shown in __Table 2__.
 
-\includegraphics[width=350pt]{offsitebks-plt.png}
+![Image](offsitebks-plt.png)
 
 --
 
